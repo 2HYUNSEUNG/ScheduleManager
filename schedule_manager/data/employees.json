@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "조영훈",
+    "role": "사장",
+    "skill_level": "조리",
+    "home_branch": "효창",
+    "fixed_holidays": [],
+    "holiday_requests": [],
+    "min_shifts_per_week": 0,
+    "max_shifts_per_week": 6
+  },
+  {
+    "id": 2,
+    "name": "김민경",
+    "role": "사장",
+    "skill_level": "조리",
+    "home_branch": "효창",
+    "fixed_holidays": [],
+    "holiday_requests": [],
+    "min_shifts_per_week": 0,
+    "max_shifts_per_week": 6
+  },
+  {
+    "id": 3,
+    "name": "조지훈",
+    "role": "매니저",
+    "skill_level": "조리",
+    "home_branch": "옥수",
+    "fixed_holidays": [],
+    "holiday_requests": [],
+    "min_shifts_per_week": 0,
+    "max_shifts_per_week": 6
+  },
+  {
+    "id": 4,
+    "name": "이지형",
+    "role": "직원",
+    "skill_level": "조리",
+    "home_branch": "옥수",
+    "fixed_holidays": [],
+    "holiday_requests": [],
+    "min_shifts_per_week": 0,
+    "max_shifts_per_week": 6
+  },
+  {
+    "id": 5,
+    "name": "연수",
+    "role": "직원",
+    "skill_level": "비조리",
+    "home_branch": "옥수",
+    "fixed_holidays": [],
+    "holiday_requests": [],
+    "min_shifts_per_week": 0,
+    "max_shifts_per_week": 6
+  },
+  {
+    "id": 6,
+    "name": "홍길동",
+    "role": "직원",
+    "skill_level": "비조리",
+    "home_branch": "효창",
+    "fixed_holidays": [],
+    "holiday_requests": [],
+    "min_shifts_per_week": 0,
+    "max_shifts_per_week": 6
+  }
+]
