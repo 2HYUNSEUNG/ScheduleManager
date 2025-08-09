@@ -33,20 +33,20 @@ def auto_assign(start_date, days=7):
             available.append(e)
 
         # 지점별 배정
-        for branch in ['옥수', '효창']:
+        for branch in ['A', 'B']:
             branch_candidates = [e for e in available if e.home_branch == branch]
 
             # 조리 가능자 최소 1명 필수
-            cooks = [e for e in branch_candidates if e.skill_level == '조리']
-            nocooks = [e for e in branch_candidates if e.skill_level != '조리']
+            cooks = [e for e in branch_candidates if e.skill_level == 'C']
+            nocooks = [e for e in branch_candidates if e.skill_level != 'C']
 
             # 인원 부족 시 다른 지점 인원 보충
             if len(cooks) < 1 or len(nocooks) < 1:
                 cross_branch = [e for e in available if e.home_branch != branch]
                 for e in cross_branch:
-                    if e.skill_level == '조리' and e not in cooks:
+                    if e.skill_level == 'C' and e not in cooks:
                         cooks.append(e)
-                    elif e.skill_level != '조리' and e not in nocooks:
+                    elif e.skill_level != 'C' and e not in nocooks:
                         nocooks.append(e)
 
             # 최종 배정 (랜덤)
@@ -62,7 +62,7 @@ def auto_assign(start_date, days=7):
                 weekly_shifts[emp.id] += 1
 
         # 휴무자 계산
-        assigned_ids = daily.working['옥수'] + daily.working['효창']
+        assigned_ids = daily.working['A'] + daily.working['B']
         daily.holidays = [e.id for e in employees if e.id not in assigned_ids]
 
         schedules[current_date] = daily

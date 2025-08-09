@@ -2,7 +2,7 @@
 class DailySchedule:
     def __init__(self, date):
         self.date = date              # YYYY-MM-DD
-        self.working = {'옥수': [], '효창': []}  # 각 지점 근무자 리스트 (직원 ID)
+        self.working = {'A': [], 'B': []}  # 각 지점 근무자 리스트 (직원 ID)
         self.holidays = []            # 휴무자 리스트 (직원 ID)
         self.memo = ''                 # 메모
         self.closed = False            # 가게 전체 휴업 여부

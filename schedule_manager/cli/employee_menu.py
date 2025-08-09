@@ -39,7 +39,7 @@ def add_employee():
     name = get_input("이름: ")
     role = get_input("직급(사장/매니저/직원): ")
     skill = get_input("숙련도(조리/비조리): ")
-    branch = get_input("근무지(옥수/효창): ")
+    branch = get_input("근무지(A/B): ")
 
     emp = Employee(new_id, name, role, skill, branch)
     employees.append(emp)

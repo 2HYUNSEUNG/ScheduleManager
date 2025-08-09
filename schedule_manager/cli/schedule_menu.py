@@ -27,7 +27,7 @@ def schedule_menu():
 def show_schedule():
     schedules = load_schedules()
     for date, sch in sorted(schedules.items()):
-        print(f"{date} | 옥수: {sch.working['옥수']} | 효창: {sch.working['효창']} | 휴무: {sch.holidays} | 메모: {sch.memo} | 휴업: {sch.closed}")
+        print(f"{date} | A: {sch.working['A']} | B: {sch.working['B']} | 휴무: {sch.holidays} | 메모: {sch.memo} | 휴업: {sch.closed}")
 
 def add_or_edit_schedule():
     schedules = load_schedules()
@@ -39,8 +39,8 @@ def add_or_edit_schedule():
 
     # 근무자 배정
     print("근무자 ID 입력 (쉼표로 구분)")
-    schedules[date].working['옥수'] = list(map(int, get_input("옥수: ").split(',')))
-    schedules[date].working['효창'] = list(map(int, get_input("효창: ").split(',')))
+    schedules[date].working['A'] = list(map(int, get_input("A: ").split(',')))
+    schedules[date].working['B'] = list(map(int, get_input("B: ").split(',')))
 
     # 휴무자 배정
     schedules[date].holidays = list(map(int, get_input("휴무자 ID: ").split(',')))
