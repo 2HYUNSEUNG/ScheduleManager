@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
         tb.addWidget(btn_bulk)
 
         # 툴바: 좌측 패널 토글
-        self.act_toggle_left = QAction("직원 패널 보기", self)
+        self.act_toggle_left = QAction("관리 패널 보기", self)
         self.act_toggle_left.setCheckable(True)
         self.act_toggle_left.setChecked(True)
         self.act_toggle_left.toggled.connect(self.toggle_left_panel)
