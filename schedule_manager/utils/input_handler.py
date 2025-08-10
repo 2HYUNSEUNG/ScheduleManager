@@ -1,20 +1,24 @@
+# utils/input_handler.py
 from schedule_manager.exceptions import CancelAction, GoBackAction
 
-def get_input(prompt: str, allow_empty: bool = False):
+def get_input(prompt: str, allow_empty: bool = False, default: str | None = None) -> str:
+    label = prompt
+    if default is not None:
+        label += f" [{default}]"
+    label += ": "
+
     while True:
-        user_input = input(prompt).strip()
+        v = input(label).strip()
 
-        if user_input.lower() in ["취소", "cancel"]:
+        low = v.lower()
+        if low in ("취소", "cancel"):
             raise CancelAction()
-        elif user_input.lower() in ["뒤로", "back"]:
+        if low in ("뒤로", "back"):
             raise GoBackAction()
-        elif user_input.lower() in ["종료", "exit"]:
-            raise SystemExit
 
-        if not user_input and not allow_empty:
-            print("값을 입력하세요.")
+        if not v and allow_empty:
+            return ""   # 명시적 빈값 허용
+        if not v:
+            print("값을 입력하거나 '취소/뒤로'를 입력하세요.")
             continue
-
-        return user_input
-
-
+        return v
