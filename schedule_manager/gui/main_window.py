@@ -366,11 +366,33 @@ class MainWindow(QMainWindow):
             self.refresh()
 
     def run_auto_assign_current_month(self):
+        month_days = calendar.monthrange(self.year, self.month)[1]
         start = f"{self.year:04d}-{self.month:02d}-01"
-        days = calendar.monthrange(self.year, self.month)[1]
-        auto_assign(start_date=start, days=days, overwrite=False)
+        msg = (
+            f"{self.year}-{self.month:02d} ({month_days}일)\n\n"
+            "이 달의 자동 배정을 실행할까요?\n"
+            "※ 기존 배정은 유지되고 빈 칸만 채워집니다."
+        )
+
+        # 확인 대화상자 (버튼 라벨: 예 / 아니오)
+        mb = QMessageBox(self)
+        mb.setIcon(QMessageBox.Question)
+        mb.setWindowTitle("자동 배정 확인")
+        mb.setText(msg)
+        mb.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        mb.setDefaultButton(QMessageBox.No)  # 기본: 아니오
+        mb.button(QMessageBox.Yes).setText("예")
+        mb.button(QMessageBox.No).setText("아니오")
+
+        ret = mb.exec()
+        if ret != QMessageBox.Yes:
+            self.status.showMessage("자동 배정을 취소했습니다.", 3000)
+            return
+
+        # 실행
+        auto_assign(start_date=start, days=month_days, overwrite=False)
         self.refresh()
-        QMessageBox.information(self, "완료", f"{self.year}-{self.month:02d} ({days}일) 자동 배정이 완료되었습니다.")
+        QMessageBox.information(self, "완료", f"{self.year}-{self.month:02d} 자동 배정을 완료했습니다.")
 
     def prev_month(self):
         if self.month == 1:
