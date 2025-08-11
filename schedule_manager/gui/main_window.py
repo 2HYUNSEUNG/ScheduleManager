@@ -16,8 +16,11 @@ from schedule_manager.data.data_manager import (
 )
 from schedule_manager.logic.scheduler import auto_assign
 from schedule_manager.gui.calendar_widget import CalendarWidget
-from schedule_manager.gui.day_editor import open_day_editor
+from schedule_manager.gui.views.day_editor import open_day_editor
 from schedule_manager.gui.bulk_editor import BulkEditorDialog
+from schedule_manager.gui.views.employee_inspector import EmployeeInspectorDialog
+from schedule_manager.gui.views.attendance_dialog import AttendanceDialog
+
 
 ROLE_OPTIONS = ["사장", "매니저", "직원"]
 BRANCH_OPTIONS = ["OS", "HC"]                # 지점 코드
@@ -36,6 +39,8 @@ class MainWindow(QMainWindow):
         self.employees = load_employees()
         self.schedules = load_schedules()
         self._editing_emp_id = None  # 현재 편집 중인 직원 ID
+        self._dlg_emp_inspector = None  # 직원별 보기
+        self._dlg_attendance = None  # 근태
 
         self._build_ui()
         self.refresh()
@@ -79,6 +84,14 @@ class MainWindow(QMainWindow):
         self.act_toggle_left.setChecked(True)
         self.act_toggle_left.toggled.connect(self.toggle_left_panel)
         tb.addAction(self.act_toggle_left)
+
+        btn_emp = QPushButton("직원별 보기")
+        btn_emp.clicked.connect(self.open_employee_inspector)
+        tb.addWidget(btn_emp)
+
+        btn_att = QPushButton("근태")
+        btn_att.clicked.connect(self.open_attendance_dialog)
+        tb.addWidget(btn_att)
 
         # 중앙: 스플리터
         central = QWidget()
@@ -366,33 +379,11 @@ class MainWindow(QMainWindow):
             self.refresh()
 
     def run_auto_assign_current_month(self):
-        month_days = calendar.monthrange(self.year, self.month)[1]
         start = f"{self.year:04d}-{self.month:02d}-01"
-        msg = (
-            f"{self.year}-{self.month:02d} ({month_days}일)\n\n"
-            "이 달의 자동 배정을 실행할까요?\n"
-            "※ 기존 배정은 유지되고 빈 칸만 채워집니다."
-        )
-
-        # 확인 대화상자 (버튼 라벨: 예 / 아니오)
-        mb = QMessageBox(self)
-        mb.setIcon(QMessageBox.Question)
-        mb.setWindowTitle("자동 배정 확인")
-        mb.setText(msg)
-        mb.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        mb.setDefaultButton(QMessageBox.No)  # 기본: 아니오
-        mb.button(QMessageBox.Yes).setText("예")
-        mb.button(QMessageBox.No).setText("아니오")
-
-        ret = mb.exec()
-        if ret != QMessageBox.Yes:
-            self.status.showMessage("자동 배정을 취소했습니다.", 3000)
-            return
-
-        # 실행
-        auto_assign(start_date=start, days=month_days, overwrite=False)
+        days = calendar.monthrange(self.year, self.month)[1]
+        auto_assign(start_date=start, days=days, overwrite=False)
         self.refresh()
-        QMessageBox.information(self, "완료", f"{self.year}-{self.month:02d} 자동 배정을 완료했습니다.")
+        QMessageBox.information(self, "완료", f"{self.year}-{self.month:02d} ({days}일) 자동 배정이 완료되었습니다.")
 
     def prev_month(self):
         if self.month == 1:
@@ -453,3 +444,36 @@ class MainWindow(QMainWindow):
             self._left_container.setVisible(False)
             self._splitter.setSizes([0, sum(sizes) if sizes else 1000])
 
+    def open_employee_inspector(self):
+        # 이미 떠 있으면 포커스만
+        try:
+            if self._dlg_emp_inspector and self._dlg_emp_inspector.isVisible():
+                self._dlg_emp_inspector.raise_()
+                self._dlg_emp_inspector.activateWindow()
+                return
+        except RuntimeError:
+            self._dlg_emp_inspector = None
+
+        dlg = EmployeeInspectorDialog(self.year, self.month, self, on_changed=self.refresh)
+        dlg.setModal(False)
+        dlg.setAttribute(Qt.WA_DeleteOnClose, True)
+        dlg.destroyed.connect(lambda _=None: setattr(self, "_dlg_emp_inspector", None))
+        dlg.show()
+        self._dlg_emp_inspector = dlg
+
+    def open_attendance_dialog(self):
+        from PySide6.QtCore import QDate
+        try:
+            if self._dlg_attendance and self._dlg_attendance.isVisible():
+                self._dlg_attendance.raise_()
+                self._dlg_attendance.activateWindow()
+                return
+        except RuntimeError:
+            self._dlg_attendance = None
+
+        dlg = AttendanceDialog(self, QDate.currentDate())
+        dlg.setModal(False)
+        dlg.setAttribute(Qt.WA_DeleteOnClose, True)
+        dlg.destroyed.connect(lambda _=None: setattr(self, "_dlg_attendance", None))
+        dlg.show()
+        self._dlg_attendance = dlg
